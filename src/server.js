@@ -153,12 +153,34 @@ app.get('/auto', (req, res) => {
 
 // url con query auto?iniciopatente=<letra>: 
 // retorna los automóviles cuya patente comienza con <letra> y los datos de su conductor (si existe).
-app.get('/autos', (req, res) => {
+app.get('/auto', (req, res) => {
 
-    const inicioPatente = req.query.iniciopatente;
+    const patentInitiation = req.query.iniciopatente;
 
+    let result = [];
 
+    for (let car of cars) {
 
+        if (car.patente.startsWith(patentInitiation)) {
+
+            let driverFound = null;
+
+            for (let driver of drivers) {
+
+                if (driver.nombre === car.nombre_conductor) {
+                    driverFound = driver;
+                    break;
+                }
+            }
+
+            result.push({
+                auto: auto,
+                conductor: driverFound
+            });
+        }
+    }
+
+    res.json(result);
 });
 
 app.listen(3000, () => {
