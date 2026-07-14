@@ -1,8 +1,12 @@
 const express = require('express');
+const path = require('path');
+
 const app = express();
 
 // Middleware for parsing JSON
 app.use(express.json());
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 const drivers = [
     {
@@ -126,7 +130,10 @@ app.get('/solitos', (req, res) => {
 //auto?patente=HXJH55
 app.get('/auto', (req, res) => {
 
+    // obtenemos la query de /patente=
+
     const patent = req.query.patente;
+    // con el metodo find 
 
     const findThePatent = cars.find(
         car => car.patente === patent
@@ -145,7 +152,7 @@ app.get('/auto', (req, res) => {
     // si no encuentra conductor , retorna null
 
     res.json({
-        findThePatent,
+        auto: findThePatent,
         conductor: findTheDriver || null
     });
 
@@ -155,26 +162,35 @@ app.get('/auto', (req, res) => {
 // retorna los automóviles cuya patente comienza con <letra> y los datos de su conductor (si existe).
 app.get('/auto', (req, res) => {
 
+    // obtenemos la query de /iniciopatente=
     const patentInitiation = req.query.iniciopatente;
 
+    // aquí es dónde guardaremos los resultados de la busqueda de info sobre los autos que comienzen con tales letras
     let result = [];
+
+    // hacemos un recorrido por todos los autos buscando cuales estan con esas letras de inicio , método starwith ayudará a eso
 
     for (let car of cars) {
 
+        // El método startsWith() indica si una cadena de texto comienza con los caracteres de una cadena de texto 
+        // concreta, devolviendo true o false según corresponda.
+
         if (car.patente.startsWith(patentInitiation)) {
-
+            //   inicializamos una variable para guardar el conductor encontrado si es que ese auto con esas iniciales tiene conductor
             let driverFound = null;
-
+            // hacemos un nuevo recorrido dentro del mismo recorrido de autos , esta vez para tomar los datos de los autos y
+            // hacerlos coincidir si existe una coincidencia con si el auto encuentra al conductor dentro de este for
             for (let driver of drivers) {
 
                 if (driver.nombre === car.nombre_conductor) {
+                    // guardamos los datos del conductor encontrado
                     driverFound = driver;
                     break;
                 }
             }
-
+            // dentro del bucle de autos vamos , agregando un obj con los datos del auto y el conductor
             result.push({
-                auto: auto,
+                auto: car,
                 conductor: driverFound
             });
         }
@@ -182,7 +198,9 @@ app.get('/auto', (req, res) => {
 
     res.json(result);
 });
+app.use(express.static('public'));
 
 app.listen(3000, () => {
     console.log('Servidor ejecutándose en puerto 3000');
 });
+
