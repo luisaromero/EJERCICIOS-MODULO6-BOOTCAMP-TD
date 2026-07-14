@@ -5,11 +5,10 @@ document.getElementById("btnPatent").addEventListener("click", searchByPatent);
 document.getElementById("btn-initial-letter").addEventListener("click", searchByLetters);
 document.getElementById("btn-drivers").addEventListener("click", showAllDrivers);
 document.getElementById("btn-cars").addEventListener("click", showAllCars);
+document.getElementById("btn-search-by-age").addEventListener("click", searchByAge);
 
 
-function cleanData() {
-    results.replaceChildren();
-}
+
 
 async function searchByPatent() {
 
@@ -23,6 +22,7 @@ async function searchByPatent() {
     renderObject(data, results)
 }
 
+
 async function searchByLetters() {
 
     const patentValue = document.getElementById("initial-letter").value;
@@ -35,6 +35,8 @@ async function searchByLetters() {
     renderArray(data, results)
 }
 
+
+
 async function showAllDrivers() {
     const response = await fetch(`http://localhost:3000/conductores`);
 
@@ -43,13 +45,28 @@ async function showAllDrivers() {
     renderArray(data, results)
 }
 
+
+
 async function showAllCars() {
+
+    const patentValue = document.getElementById("initial-letter").value;
     const response = await fetch(`http://localhost:3000/automoviles`);
 
     const data = await response.json();
 
     renderArray(data, results)
 }
+
+async function searchByAge() {
+
+    const searchByAgeValue = document.getElementById("search-by-age").value;
+    const response = await fetch(`conductoressinauto?edad=${searchByAgeValue}`);
+
+    const data = await response.json();
+
+    renderArray(data, results)
+}
+
 
 function renderArray(arr, container = results) {
     container.replaceChildren();

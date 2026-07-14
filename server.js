@@ -130,8 +130,8 @@ app.get('/solitos', (req, res) => {
 //auto?patente=HXJH55
 app.get('/auto', (req, res) => {
 
-    const patent = req.query.patente;
-    const patentInitiation = req.query.iniciopatente;
+    const patent = req.query.patente?.toUpperCase().trim();
+    const patentInitiation = req.query.iniciopatente?.toUpperCase().trim();
 
     // Caso 1: búsqueda por patente exacta
     if (patent) {
