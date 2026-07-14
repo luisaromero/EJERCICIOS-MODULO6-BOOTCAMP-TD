@@ -79,6 +79,8 @@ async function searchByLetters() {
 
     const data = await response.json();
 
+    console.log({ data })
+
     renderArray(data, results)
 }
 

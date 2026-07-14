@@ -6,6 +6,13 @@ const app = express();
 // Middleware for parsing JSON
 app.use(express.json());
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 const drivers = [
@@ -210,18 +217,21 @@ app.get('/auto', (req, res) => {
                     }
                 }
                 // dentro del bucle de autos vamos , agregando un obj con los datos del auto y el conductor
-                if (result.length === 0) {
-                    return res.status(404).json({
-                        mensaje: 'No se encontraron automóviles con esa inicial de patente'
-                    });
-                }
-
-                return res.status(200).json(result);
+                result.push({
+                    auto: car,
+                    conductor: driverFound
+                });
             }
         }
 
-        res.json(result);
+        // recién acá, después de terminar de recorrer TODOS los autos, decidimos qué responder
+        if (result.length === 0) {
+            return res.status(404).json({
+                mensaje: 'No se encontraron automóviles con esa inicial de patente'
+            });
+        }
 
+        return res.status(200).json(result);
     }
 
     // Si no viene ninguno de los dos query params
@@ -235,7 +245,12 @@ app.get('/auto', (req, res) => {
 
 app.use(express.static('public'));
 
-app.listen(3000, () => {
-    console.log('Servidor ejecutándose en puerto 3000');
+require('dotenv').config();
+
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor ejecutándose en puerto ${PORT}`);
 });
 
