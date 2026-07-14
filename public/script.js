@@ -6,34 +6,9 @@ document.getElementById("btn-initial-letter").addEventListener("click", searchBy
 document.getElementById("btn-drivers").addEventListener("click", showAllDrivers);
 document.getElementById("btn-cars").addEventListener("click", showAllCars);
 document.getElementById("btn-search-by-age").addEventListener("click", searchByAge);
+document.getElementById("btn-alone").addEventListener("click", searchByNoCarsNoDrivers);
 
 
-
-
-async function searchByPatent() {
-
-    const patentValue = document.getElementById("patent").value;
-    console.log('patentee', patentValue)
-
-    const response = await fetch(`http://localhost:3000/auto?patente=${patentValue}`);
-
-    const data = await response.json();
-
-    renderObject(data, results)
-}
-
-
-async function searchByLetters() {
-
-    const patentValue = document.getElementById("initial-letter").value;
-    console.log('letras', patentValue)
-
-    const response = await fetch(`http://localhost:3000/auto?iniciopatente=${patentValue}`);
-
-    const data = await response.json();
-
-    renderArray(data, results)
-}
 
 
 
@@ -60,7 +35,41 @@ async function showAllCars() {
 async function searchByAge() {
 
     const searchByAgeValue = document.getElementById("search-by-age").value;
-    const response = await fetch(`conductoressinauto?edad=${searchByAgeValue}`);
+    const response = await fetch(`http://localhost:3000/conductoressinauto?edad=${searchByAgeValue}`);
+
+    const data = await response.json();
+
+    renderArray(data, results)
+}
+
+async function searchByNoCarsNoDrivers() {
+
+    const response = await fetch(`/solitos`);
+
+    const data = await response.json();
+
+    showDriverlessAndNoCar(data, results)
+}
+
+
+
+async function searchByPatent() {
+
+    const patentValue = document.getElementById("patent").value;
+
+    const response = await fetch(`http://localhost:3000/auto?patente=${patentValue}`);
+
+    const data = await response.json();
+
+    renderObject(data, results)
+}
+
+
+async function searchByLetters() {
+
+    const patentValue = document.getElementById("initial-letter").value;
+
+    const response = await fetch(`http://localhost:3000/auto?iniciopatente=${patentValue}`);
 
     const data = await response.json();
 
@@ -94,7 +103,6 @@ function renderArray(arr, container = results) {
     });
 }
 
-// retorna el automóvil con patente <string> y los datos de su conductor (si existe).
 
 
 function renderObject(obj, container = results) {
@@ -134,4 +142,48 @@ function renderObject(obj, container = results) {
             container.appendChild(line);
         }
     });
+}
+
+function showDriverlessAndNoCar(data, container = results) {
+    container.replaceChildren();
+
+    // Sección: conductores sin auto
+    const noCarTitle = document.createElement("h3");
+    noCarTitle.textContent = "Conductores sin auto";
+    container.appendChild(noCarTitle);
+
+    if (data.noCar.length === 0) {
+        const empty = document.createElement("div");
+        empty.textContent = "No hay conductores sin auto.";
+        container.appendChild(empty);
+    } else {
+        data.noCar.forEach((driver, index) => {
+            const wrapper = document.createElement("div");
+            wrapper.style.marginBottom = "1rem";
+            wrapper.style.paddingBottom = "0.5rem";
+            wrapper.style.borderBottom = "1px solid #ccc";
+            container.appendChild(wrapper);
+            renderObject(driver, wrapper);
+        });
+    }
+
+    // Sección: autos sin conductor
+    const driverlessTitle = document.createElement("h3");
+    driverlessTitle.textContent = "Autos sin conductor";
+    container.appendChild(driverlessTitle);
+
+    if (data.driverless.length === 0) {
+        const empty = document.createElement("div");
+        empty.textContent = "No hay autos sin conductor.";
+        container.appendChild(empty);
+    } else {
+        data.driverless.forEach((car, index) => {
+            const wrapper = document.createElement("div");
+            wrapper.style.marginBottom = "1rem";
+            wrapper.style.paddingBottom = "0.5rem";
+            wrapper.style.borderBottom = "1px solid #ccc";
+            container.appendChild(wrapper);
+            renderObject(car, wrapper);
+        });
+    }
 }
