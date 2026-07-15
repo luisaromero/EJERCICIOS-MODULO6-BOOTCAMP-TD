@@ -80,7 +80,7 @@ Retorna los automóviles cuya patente comienza con `<letra>` y los datos de su c
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone [github proyecto]('https://github.com/luisaromero/ACTIVIDAD-API-CON-EXPRESS.git')
+   git clone [github proyecto](https://github.com/luisaromero/ACTIVIDAD-API-CON-EXPRESS.git)
    cd proyecto
    ```
 2. **Instalar dependencias**:
